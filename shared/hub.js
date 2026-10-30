@@ -24,7 +24,6 @@ function access(g){if(g.access==="free")return"<i>"+H.free+"</i>";if(MW.pro.has(
 /* ---------- catalogus ---------- */
 var ICON={
   missing:'<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="32" cy="20" r="10" stroke-dasharray="4 4"/><path d="M12 56c2-14 9-20 20-20s18 6 20 20" stroke-dasharray="5 4"/><path d="M44 10l6-6M50 4v6M50 4h-6" opacity=".7"/></svg>',
-  kids:'<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="36" cy="38" rx="16" ry="12"/><circle cx="26" cy="24" r="9"/><path d="M17 25l-9 2 9 2"/><circle cx="28" cy="22" r="1.6" fill="currentColor"/><path d="M50 34l10-6-4 10M30 50l-2 7M40 50l2 7"/><path d="M8 50l1.5 3 3.5.5-2.5 2.5.5 3.5-3-1.5-3 1.5.5-3.5L3 53.5l3.5-.5z" opacity=".6"/></svg>',
   cold:'<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"><path d="M8 18h18l5 6h25v28H8z"/><path d="M8 30h48" opacity=".6"/><path d="M20 40h24M20 46h16" opacity=".6"/></svg>',
   night:'<svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M40 8a22 22 0 1 0 16 36A18 18 0 0 1 40 8z"/><path d="M14 12l1 3 3 1-3 1-1 3-1-3-3-1 3-1zM52 50l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" fill="currentColor" stroke="none"/></svg>'};
 
@@ -35,7 +34,7 @@ function card(g){var x=g[L],p=MW.profile.get(),st=p.games&&p.games[g.id],soon=g.
   meta.push(access(g));
   if(g.group)meta.push("<i>"+H.grp+"</i>");
   if(st&&st.best)meta.push('<i class="star">'+H.best+" "+"★".repeat(st.best)+"☆".repeat(3-st.best)+"</i>");
-  var COV={mw:1,td:1,vz:1,og:1,cc:1,lb:1,ng:1,fj:1,ag:1,sj:1,pp:1};
+  var COV={mw:1,td:1,vz:1,og:1,cc:1,lb:1,ng:1,fj:1};
   var cover=COV[g.id]?'<img class="cover" src="'+MW.root+'assets/cover-'+g.id+'.webp?v=2" alt="" width="400" height="400" loading="lazy">':'<div class="cover ico-'+g.cat+'" aria-hidden="true">'+(ICON[g.cat]||"")+'</div>';
   return '<article class="game'+(soon?' soon':'')+(g.status==="new"?' isnew':'')+'" data-id="'+g.id+'">'+(soon?'<span class="stamp">'+H.soon+'</span>':'')+(g.status==="new"?'<span class="ribbon">'+H.neu+'</span>':'')+cover+'<h3>'+esc(x.title)+'</h3><p class="tag">'+esc(x.tag)+'</p><p class="desc">'+esc(x.desc)+'</p><div class="meta">'+meta.join("")+'</div>'+
     (soon?'<button class="btn ghost dk" disabled>'+H.soon+'</button>':'<a class="btn" href="'+MW.root+esc(x.slug)+'">'+(has?H.resume:H.play)+' →</a>')+'</article>'}
@@ -60,6 +59,32 @@ function privacy(){sheet('<div class="eyebrow">'+H.privacy+'</div><h2>'+H.privH+
 function proBox(){var b=$("#proBox");if(MW.pro.isPro()){b.hidden=true;return}b.innerHTML=MW.proHTML(L,"team");
   MW.bindPro(b,L,function(r,msg){profile();catalog();proBox();toast(msg)})}
 
+
+/* ---------- moordwandeling op maat: formulier → mail ---------- */
+var CF={nl:{btn:"✉ Op maat",h:"Een wandeling op maat nodig?",lead:"Een moordzaak voor jullie bedrijfsuitje, vrijgezellenfeest, verjaardag of klas, in jullie eigen stad, met jullie namen in het verhaal? Vertel wat je in gedachten hebt. Het formulier opent je mailprogramma met alles al ingevuld; verstuur de mail en je hoort snel wat er kan. Prijs in overleg.",
+    name:"Je naam",email:"Je e-mailadres",n:"Aantal deelnemers",teams:"Aantal teams",where:"Waar (stad, buurt of startadres)",when:"Wanneer (datum, of ongeveer)",kind:"Wat voor gelegenheid?",kinds:["Bedrijfsuitje of teamuitje","Vrijgezellenfeest","Verjaardag of feest","Familie- of vriendendag","School of klas","Iets anders"],
+    wish:"Jullie wensen",wishP:"Bijvoorbeeld: het slachtoffer is onze directeur (met een knipoog), start bij het station en eindigen in ons stamcafé, een bruiloftsthema, Engelstalig…",send:"✉ Open de mail en verstuur",copy:"Lukt het mailen niet? Kopieer de tekst",copied:"Gekopieerd. Plak hem in een mail aan kellievandekerkhof@gmail.com.",need:"Vul in elk geval je naam en jullie wensen in.",
+    subj:"Moordwandeling op maat",hi:"Hoi Kellie,",intro:"Ik zoek een moordwandeling op maat.",bye:"Groet,"},
+  en:{btn:"✉ Custom",h:"Need a walk made to measure?",lead:"A murder case for your company outing, hen or stag party, birthday or class, in your own town, with your names in the story? Tell me what you have in mind. The form opens your mail app with everything filled in; send the email and you'll hear quickly what's possible. Price on request.",
+    name:"Your name",email:"Your email address",n:"Number of players",teams:"Number of teams",where:"Where (town, neighbourhood or start address)",when:"When (date, or roughly)",kind:"What's the occasion?",kinds:["Company or team outing","Hen or stag party","Birthday or party","Family or friends' day","School or class","Something else"],
+    wish:"Your wishes",wishP:"For example: the victim is our CEO (tongue in cheek), start at the station and finish at our local pub, a wedding theme, in Dutch…",send:"✉ Open the email and send",copy:"Email not working? Copy the text",copied:"Copied. Paste it into an email to kellievandekerkhof@gmail.com.",need:"At least fill in your name and your wishes.",
+    subj:"Custom Murder Walk",hi:"Hi Kellie,",intro:"I'm looking for a custom Murder Walk.",bye:"Kind regards,"}}[L];
+var MAIL="kellievandekerkhof@gmail.com",CFK="ss_mw_custom";
+function customForm(){var v=MW.LS.get(CFK,{});var f=function(id,lab,ph,type){return '<label class="cf"><span>'+lab+'</span><input type="'+(type||"text")+'" id="'+id+'" autocomplete="'+(id==="cfN"?"name":id==="cfE"?"email":"off")+'" value="'+esc(v[id]||"")+'"'+(ph?' placeholder="'+esc(ph)+'"':'')+'></label>'};
+  sheet('<div class="eyebrow">'+(L==="nl"?"Moordwandeling":"Murder Walk")+'</div><h2>'+CF.h+'</h2><p class="cfl">'+CF.lead+'</p><form id="cfF" novalidate>'+f("cfN",CF.name)+f("cfE",CF.email,"",'email')+'<div class="cf2">'+f("cfK",CF.n,"12",'number')+f("cfA",CF.teams,"3",'number')+'</div>'+f("cfW",CF.where)+f("cfD",CF.when)+
+    '<label class="cf"><span>'+CF.kind+'</span><select id="cfT">'+CF.kinds.map(function(k){return '<option'+(v.cfT===k?' selected':'')+'>'+esc(k)+'</option>'}).join("")+'</select></label>'+
+    '<label class="cf"><span>'+CF.wish+'</span><textarea id="cfX" rows="4" placeholder="'+esc(CF.wishP)+'">'+esc(v.cfX||"")+'</textarea></label>'+
+    '<p class="note" id="cfM" style="color:#a5392c"></p><button type="submit" class="btn">'+CF.send+'</button><button type="button" class="btn ghost dk" id="cfC">'+CF.copy+'</button><button type="button" class="btn ghost dk" id="shX">'+t.close+'</button></form>');
+  $("#shX").onclick=closeSheet;
+  var read=function(){var o={};["cfN","cfE","cfK","cfA","cfW","cfD","cfT","cfX"].forEach(function(id){o[id]=($("#"+id).value||"").trim()});MW.LS.set(CFK,o);return o};
+  var body=function(o){return CF.hi+"\n\n"+CF.intro+"\n\n"+CF.kind+": "+o.cfT+"\n"+CF.n+": "+o.cfK+"\n"+CF.teams+": "+o.cfA+"\n"+CF.where+": "+o.cfW+"\n"+CF.when+": "+o.cfD+"\n\n"+CF.wish+":\n"+o.cfX+"\n\n"+CF.bye+"\n"+o.cfN+(o.cfE?"\n"+o.cfE:"")+"\n"};
+  var ok=function(o){if(!o.cfN||!o.cfX){$("#cfM").textContent=CF.need;return false}$("#cfM").textContent="";return true};
+  $("#cfF").onsubmit=function(e){e.preventDefault();var o=read();if(!ok(o))return;location.href="mailto:"+MAIL+"?subject="+encodeURIComponent(CF.subj)+"&body="+encodeURIComponent(body(o))};
+  $("#cfC").onclick=function(){var o=read();if(!ok(o))return;var txt=CF.subj+"\n\n"+body(o);try{navigator.clipboard.writeText(txt).then(function(){toast(CF.copied)},function(){prompt(MAIL,txt)})}catch(err){prompt(MAIL,txt)}}}
+function customBtn(){var top=document.querySelector(".hero .top"),lg=$("#lang");if(top&&lg&&!$("#bCustom")){var w=document.createElement("span");w.className="tr";top.insertBefore(w,lg);
+    var b=document.createElement("button");b.type="button";b.className="pill custom-pill";b.id="bCustom";b.textContent=CF.btn;w.appendChild(b);w.appendChild(lg);b.onclick=customForm}
+  document.querySelectorAll("[data-custom]").forEach(function(a){a.removeAttribute("href");a.setAttribute("role","button");a.onclick=function(e){e.preventDefault();customForm()}})}
+
 /* ---------- hemel: regen en lantaarnlicht ---------- */
 function sky(){var cv=$("#sky");if(!cv)return;var g=cv.getContext("2d"),still=matchMedia("(prefers-reduced-motion: reduce)").matches,w,h,drops=[],dpr=1,hero=$(".hero");
   function rs(){dpr=Math.min(2,devicePixelRatio||1);w=cv.clientWidth;h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;drops=[];for(var i=0;i<(still?0:140);i++)drops.push([Math.random()*w,Math.random()*h,10+Math.random()*16,.35+Math.random()*.55])}
@@ -75,6 +100,6 @@ function typed(){var el=$("#typed");if(!el)return;var still=matchMedia("(prefers
 /* ---------- start ---------- */
 $("#bPro").onclick=function(){proSheet("team")};$("#bPriv").onclick=privacy;
 var sw=$("#lang");if(sw)sw.onclick=function(e){e.preventDefault();var to=L==="nl"?"en":"nl";MW.lang.set(to);location.href=MW.hubUrl(to)};
-profile();catalog();proBox();sky();typed();
+profile();catalog();proBox();customBtn();sky();typed();
 MW.pro.ready.then(function(){profile();catalog();proBox()});
 })();
